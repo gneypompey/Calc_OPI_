@@ -4,7 +4,7 @@ import math
 win = Tk()
 win.title("Калькулятор")
 win.geometry('315x510')
-win.configure(background='grey')
+win.configure(background='#D5B79B')  # Темно-бежевий фон для вікна
 
 def btnclick(num):
     global operator
@@ -101,17 +101,30 @@ def key_press(event):
         clear()
         return "break"
 
-label = Label(win, font=('ariel', 20, 'bold'), text='Калькулятор', bg='grey', fg='black')
-label.grid(columnspan=4)
+label = Label(win, font=('Helvetica', 20, 'bold'), text='Калькулятор', bg='#D5B79B', fg='#2E2A2A')
+label.grid(columnspan=4, pady=10)
 
 _input = StringVar()
 operator = ""
 
-display = Entry(win, font=('ariel', 20, 'bold'), textvariable=_input, insertwidth=7, bd=5, bg="white", justify='right')
-display.grid(columnspan=4, sticky='nsew')
+display = Entry(win, font=('Helvetica', 20, 'bold'), textvariable=_input, insertwidth=7, bd=5, bg="#F4D7B8", fg="#2E2A2A", justify='right', relief='flat')
+display.grid(columnspan=4, sticky='nsew', padx=20, pady=10)
 display.bind("<Key>", key_press)
 
 display.focus_set()
+
+# Темно-бежеві кольори для кнопок
+button_bg = '#F4D7B8'  # Світло-бежевий фон для кнопок
+button_fg = '#2E2A2A'  # Темний текст для кнопок
+button_active_bg = '#E1C29B'  # Легкий бежевий фон при натисканні
+button_border = '1px solid #B18F6A'  # Легкий бордер для кнопок
+
+def create_rounded_button(master, text, row, col, cmd, colspan=1):
+    button = Button(master, text=text, font=('Helvetica', 20, 'bold'), padx=20, pady=20, bd=4, bg=button_bg, fg=button_fg, activebackground=button_active_bg, relief='solid', highlightthickness=0, command=cmd)
+    button.grid(row=row, column=col, sticky='nsew', padx=5, pady=5, columnspan=colspan)
+    button.config(borderwidth=2, relief="solid", highlightthickness=0)
+    button.config(width=4, height=2, font=("Helvetica", 18))
+    return button
 
 buttons = [
     ('7', 2, 0), ('8', 2, 1), ('9', 2, 2), ('+', 2, 3),
@@ -121,7 +134,6 @@ buttons = [
     ('^', 6, 0), ('√', 6, 1), ('sin', 6, 2), ('cos', 6, 3),
     ('tan', 7, 0), ('!', 7, 1)
 ]
-
 for (text, row, col) in buttons:
     action = lambda x=text: btnclick(x) if x not in ('C', '√', 'sin', 'cos', 'tan', '!', '^') else None
     cmd = {
@@ -133,10 +145,10 @@ for (text, row, col) in buttons:
         '!': factorial,
         '^': power
     }.get(text, action)
-    Button(win, text=text, font=('ariel', 20, 'bold'), padx=16, pady=16, bd=4, bg='grey', command=cmd).grid(row=row, column=col, sticky='nsew')
 
-bequal = Button(win, text="=", font=('ariel', 20, 'bold'), padx=16, pady=16, bd=4, bg="grey", command=answer)
-bequal.grid(row=7, column=2, columnspan=2, sticky="nsew")
+    create_rounded_button(win, text, row, col, cmd)
+
+bequal = create_rounded_button(win, "=", 7, 2, answer, colspan=2)
 
 for i in range(8):
     win.grid_rowconfigure(i, weight=1)
